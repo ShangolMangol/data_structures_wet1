@@ -71,17 +71,19 @@ public:
 
     AVLTree(T* array, int length)
     {
-        int degree = 0, fullNodesNum = 1;
+        int degree = 0, rootHeight = 0, fullNodesNum = 1, product = 1;
         while(fullNodesNum < length)
         {
-            fullNodesNum = fullNodesNum * 2;
+            product = product * 2;
+            fullNodesNum = product - 1;
             degree++;
+            rootHeight = degree - 1;
         }
-//        int rootHeight = degree - 1;
-//        fullNodesNum--; // 2^(h+1) - 1
+
+
         int nodesToDelete = fullNodesNum - length, index = 0;
-        root = createTreeWithNodes(root, degree);
-        root = removeNodeFullTree(root, degree, &nodesToDelete);
+        root = createTreeWithNodes(root, rootHeight);
+        root = removeNodeFullTree(root, rootHeight, &nodesToDelete);
         fillInOrder(root, array, length, &index);
 
     }
