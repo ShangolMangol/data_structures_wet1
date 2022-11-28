@@ -17,12 +17,26 @@
 
 #include "wet1util.h"
 
+#include <memory>
+#include "Player.h"
+#include "Team.h"
+#include "AVLTree.h"
+#include "CompareTeamById.h"
+#include "ComparePlayerById.h"
+#include "ComparePlayerByScore.h"
+
 class world_cup_t {
 private:
 	//
 	// Here you may add anything you want
 	//
-	
+    AVLTree<std::shared_ptr<Team>, CompareTeamById> teamsById;
+    AVLTree<std::shared_ptr<Team>, CompareTeamById> validTeams;
+    AVLTree<std::shared_ptr<Player>, ComparePlayerById> playersById;
+    AVLTree<std::shared_ptr<Player>, ComparePlayerByScore> playersByScore;
+    int playersNum;
+    Player* topScorer;
+
 public:
 	// <DO-NOT-MODIFY> {
 	

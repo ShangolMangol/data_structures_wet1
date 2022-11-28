@@ -64,10 +64,9 @@ class AVLTree
 {
 public:
     AVLNode<T> * root;
-    Compare isLeftSmaller;
-    Compare isEqual;
+    Compare compare;
 
-    AVLTree():root(nullptr), isLeftSmaller("<"), isEqual("==") {}
+    AVLTree():root(nullptr), compare() {}
 
     AVLTree(T* array, int length)
     {
@@ -128,7 +127,7 @@ public:
             return;
 
         fillInOrder(current->left, array, length, index);
-        current->data = array[index];
+        current->data = array[*index];
         (*index)++;
         fillInOrder(current->right, array, length, index);
 
@@ -155,7 +154,12 @@ public:
 
     }
 
-    int getBalanceFactor(AVLNode<T> *node){
+    int getBalanceFactor(AVLNode<T> *node)
+    {
+        if(node == nullptr)
+        {
+            return -30;//impossible
+        }
         if(node->left != nullptr && node->right != nullptr)
         {
             return node->left->height - node->right->height;
@@ -167,6 +171,10 @@ public:
         else if(node->left == nullptr && node->right != nullptr)
         {
             return -1 - node->right->height;
+        }
+        else
+        {
+            return 0;
         }
     }
 
@@ -215,7 +223,7 @@ public:
 
         p->height= calculateHeight(p);
         temp1->height= calculateHeight(temp1);
-        p->height= calculateHeight(temp2);
+        temp2->height= calculateHeight(temp2);
         return temp2;
     }
 
@@ -234,13 +242,12 @@ public:
 
         p->height= calculateHeight(p);
         temp1->height= calculateHeight(temp1);
-        p->height= calculateHeight(temp2);
+        temp2->height= calculateHeight(temp2);
 
         return temp2;
     }
 
-    template<class S>
-    AVLNode<T>* insert(AVLNode<T> *current, S data){
+    AVLNode<T>* insert(AVLNode<T> *current, T data){
 
         if(current == nullptr){
 //            AVLNode<T> *n;
@@ -253,11 +260,13 @@ public:
 //            current->height = 0;
             return current;
         }
-        else{
-            if(isLeftSmaller(data, current->data)) //data < current->data
-                current->left = insert(current->left, data);
-            else
+        else
+        {
+            if(compare.isLeftSmaller(current->data, data, true))
                 current->right = insert(current->right, data);
+            else
+                current->left = insert(current->left, data);
+
         }
 
         current->height = calculateHeight(current);
@@ -267,7 +276,7 @@ public:
             current = LLrotation(current);
         }
         else if(getBalanceFactor(current) == -2 &&
-            (getBalanceFactor(current->right) == -1 || getBalanceFactor(current->left) == 0)){
+            (getBalanceFactor(current->right) == -1 || getBalanceFactor(current->right) == 0)){
             current = RRrotation(current);
         }
         else if(getBalanceFactor(current) == -2 && getBalanceFactor(current->right) == 1){
@@ -288,17 +297,17 @@ public:
         if(current == nullptr)
             return nullptr;
 
-        if(isEqual(current->data, data))
+        if(compare.isEqual(current->data, data))
         {
             return current;
         }
-        else if(isLeftSmaller(current->data, data))
+        else if(compare.isLeftSmaller(current->data, data, false))
         {
-            return findNode(current->left, data);
+            return findNode(current->right, data);
         }
         else
         {
-            return findNode(current->right, data);
+            return findNode(current->left, data);
         }
 
     }
@@ -306,7 +315,7 @@ public:
     template<class S>
     AVLNode<T> * deleteNode(AVLNode<T> *current, S data){
         if(current->left == nullptr && current->right == nullptr){
-            if(isEqual(current->data, data))
+            if(compare.isEqual(current->data, data))
             {
                 if (current == this->root)
                     this->root = nullptr;
@@ -320,13 +329,13 @@ public:
 
         AVLNode<T> *temp;
 
-        if(isLeftSmaller(current->data, data)) //current->data < data
-        {
-            current->left = deleteNode(current->left,data);
-        }
-        else if(!isEqual(current->data, data)) // checking current->data > data
+        if(compare.isLeftSmaller(current->data, data, false)) //current->data < data
         {
             current->right = deleteNode(current->right,data);
+        }
+        else if(!compare.isEqual(current->data, data)) // checking current->data > data
+        {
+            current->left = deleteNode(current->left,data);
         }
         else //they are equal
         {

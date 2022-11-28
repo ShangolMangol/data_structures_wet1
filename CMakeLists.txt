@@ -3,4 +3,4 @@ project(wet1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(wet1 main.cpp)
+add_executable(wet1 main.cpp AVLTree.h ComparePlayerById.cpp ComparePlayerById.h Player.cpp Player.h Team.cpp Team.h CompareTeamById.cpp CompareTeamById.h ComparePlayerByScore.cpp ComparePlayerByScore.h)
