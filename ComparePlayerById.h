@@ -10,11 +10,15 @@
 class ComparePlayerById
 {
 public:
-    bool isLeftSmaller(std::shared_ptr<Player>& player, int currentId, bool mode);
-    bool isLeftSmaller(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer, bool mode);
+    bool isLeftSmaller(std::shared_ptr<Player>& player, int currentId);
+    bool isLeftSmaller(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
     bool isEqual(std::shared_ptr<Player>& player, int currentId);
     bool isEqual(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
 
+    void insertToLeft(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
+    void insertToRight(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
+
+    void handleDelete(std::shared_ptr<Player>& playerToDelete);
 };
 
 

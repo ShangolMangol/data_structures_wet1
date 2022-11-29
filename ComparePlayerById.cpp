@@ -4,12 +4,12 @@
 
 #include "ComparePlayerById.h"
 
-bool ComparePlayerById::isLeftSmaller(std::shared_ptr<Player> &player, int currentId, bool mode)
+bool ComparePlayerById::isLeftSmaller(std::shared_ptr<Player> &player, int currentId)
 {
     return player->playerID < currentId;
 }
 
-bool ComparePlayerById::isLeftSmaller(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer, bool mode)
+bool ComparePlayerById::isLeftSmaller(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
 {
     return player->playerID < currentPlayer->playerID;
 }
@@ -22,5 +22,20 @@ bool ComparePlayerById::isEqual(std::shared_ptr<Player> &player, int currentId)
 bool ComparePlayerById::isEqual(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
 {
     return player->playerID == currentPlayer->playerID;
+}
+
+void ComparePlayerById::insertToLeft(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
+{
+
+}
+
+void ComparePlayerById::insertToRight(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
+{
+
+}
+
+void ComparePlayerById::handleDelete(std::shared_ptr<Player> &playerToDelete)
+{
+
 }
 

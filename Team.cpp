@@ -3,3 +3,8 @@
 //
 
 #include "Team.h"
+
+bool Team::isTeamValid() const
+{
+    return teamPlayersNum >= 11 && goalKeepersNum >= 1;
+}

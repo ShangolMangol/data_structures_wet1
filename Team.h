@@ -13,6 +13,9 @@ class Player;
 class Team
 {
 public:
+
+    bool isTeamValid() const;
+
     int teamID;
     int totalPoints;
     int totalCards;
@@ -23,8 +26,8 @@ public:
     AVLTree<std::shared_ptr<Player>,CompareTeamById> playersByID;
     //AVLTree<std::shared_ptr<Player>,CompareTeamByScore> playerByScore;
     Player *teamTopScorer;
-    Team *previousPlayingTeam;
-    Team *nextPlayingTeam;
+    Team *previousValidTeam;
+    Team *nextValidTeam;
 
 };
 

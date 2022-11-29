@@ -11,10 +11,15 @@ class Team;
 
 class CompareTeamById
 {
-    bool isLeftSmaller(std::shared_ptr<Team>& team, int currentId, bool mode);
-    bool isLeftSmaller(std::shared_ptr<Team>& team, std::shared_ptr<Team>& currentTeam, bool mode);
+    bool isLeftSmaller(std::shared_ptr<Team>& team, int currentId);
+    bool isLeftSmaller(std::shared_ptr<Team>& team, std::shared_ptr<Team>& currentTeam);
     bool isEqual(std::shared_ptr<Team>& team, int currentId);
     bool isEqual(std::shared_ptr<Team>& team, std::shared_ptr<Team>& currentTeam);
+
+    void insertToLeft(std::shared_ptr<Team>& team, std::shared_ptr<Team>& currentTeam);
+    void insertToRight(std::shared_ptr<Team>& team, std::shared_ptr<Team>& currentTeam);
+
+    void handleDelete(std::shared_ptr<Team>& teamToDelete);
 };
 
 

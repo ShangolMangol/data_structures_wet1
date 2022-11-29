@@ -6,7 +6,7 @@
 
 
 bool ComparePlayerByScore::isLeftSmaller(std::shared_ptr<Player> &player,
-                                         std::shared_ptr<Player> &currentPlayer, bool mode)
+                                         std::shared_ptr<Player> &currentPlayer)
 {
     //Checking Goals
     if(player->numOfGoals < currentPlayer->numOfGoals)
@@ -47,5 +47,28 @@ bool ComparePlayerByScore::isEqual(std::shared_ptr<Player> &player, std::shared_
 
 void ComparePlayerByScore::insertToLeft(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
 {
-//    if(c)
+    currentPlayer->closestRight = player.get();
+    currentPlayer->closestLeft = player->closestLeft;
+    player->closestLeft = currentPlayer.get();
+    if(currentPlayer->closestLeft != nullptr)
+        currentPlayer->closestLeft->closestRight = currentPlayer.get();
 }
+
+void ComparePlayerByScore::insertToRight(std::shared_ptr<Player> &player, std::shared_ptr<Player> &currentPlayer)
+{
+    currentPlayer->closestLeft = player.get();
+    currentPlayer->closestRight = player->closestRight;
+    player->closestRight = currentPlayer.get();
+    if(currentPlayer->closestRight != nullptr)
+        currentPlayer->closestRight->closestLeft = currentPlayer.get();
+}
+
+void ComparePlayerByScore::handleDelete(std::shared_ptr<Player> &playerToDelete)
+{
+    if(playerToDelete->closestLeft != nullptr)
+        playerToDelete->closestLeft->closestRight = playerToDelete->closestRight;
+    if(playerToDelete->closestRight != nullptr)
+        playerToDelete->closestRight->closestLeft = playerToDelete->closestLeft;
+}
+
+

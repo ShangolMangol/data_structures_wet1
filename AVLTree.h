@@ -262,11 +262,18 @@ public:
         }
         else
         {
-            if(compare.isLeftSmaller(current->data, data, true))
+            if(compare.isLeftSmaller(current->data, data))
+            {
+                if(current->right == nullptr)
+                    compare.insertToRight(current->data, data);
                 current->right = insert(current->right, data);
+            }
             else
+            {
+                if(current->left == nullptr)
+                    compare.insertToLeft(current->data, data);
                 current->left = insert(current->left, data);
-
+            }
         }
 
         current->height = calculateHeight(current);
@@ -301,7 +308,7 @@ public:
         {
             return current;
         }
-        else if(compare.isLeftSmaller(current->data, data, false))
+        else if(compare.isLeftSmaller(current->data, data))
         {
             return findNode(current->right, data);
         }
@@ -321,6 +328,9 @@ public:
                     this->root = nullptr;
                 current->left= nullptr;
                 current->right= nullptr;
+
+                compare.handleDelete(current);
+
                 delete current;
                 return nullptr;
             }
@@ -329,7 +339,7 @@ public:
 
         AVLNode<T> *temp;
 
-        if(compare.isLeftSmaller(current->data, data, false)) //current->data < data
+        if(compare.isLeftSmaller(current->data, data)) //current->data < data
         {
             current->right = deleteNode(current->right,data);
         }
