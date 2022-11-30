@@ -3,6 +3,7 @@
 //
 
 #include "ComparePlayerById.h"
+#include "Player.h"
 
 bool ComparePlayerById::isLeftSmaller(std::shared_ptr<Player> &player, int currentId)
 {

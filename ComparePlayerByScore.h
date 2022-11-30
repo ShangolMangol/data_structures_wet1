@@ -6,10 +6,12 @@
 #define WET1_COMPAREPLAYERBYSCORE_H
 
 #include <memory>
-#include "Player.h"
+
+class Player;
 
 class ComparePlayerByScore
 {
+public:
     bool isLeftSmaller(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
     bool isEqual(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
 

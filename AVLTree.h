@@ -320,7 +320,10 @@ public:
     }
 
     template<class S>
-    AVLNode<T> * deleteNode(AVLNode<T> *current, S data){
+    AVLNode<T> * deleteNode(AVLNode<T> *current, S data)
+    {
+        if(current == nullptr)
+            return nullptr;
         if(current->left == nullptr && current->right == nullptr){
             if(compare.isEqual(current->data, data))
             {
@@ -329,7 +332,7 @@ public:
                 current->left= nullptr;
                 current->right= nullptr;
 
-                compare.handleDelete(current);
+                compare.handleDelete(current->data);
 
                 delete current;
                 return nullptr;
@@ -341,11 +344,11 @@ public:
 
         if(compare.isLeftSmaller(current->data, data)) //current->data < data
         {
-            current->right = deleteNode(current->right,data);
+            current->right = deleteNode(current->right, data);
         }
         else if(!compare.isEqual(current->data, data)) // checking current->data > data
         {
-            current->left = deleteNode(current->left,data);
+            current->left = deleteNode(current->left, data);
         }
         else //they are equal
         {

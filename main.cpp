@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "AVLTree.h"
 #include "ComparePlayerById.h"
+#include "worldcup23a1.h"
 
 //struct node {
 //    struct node *left;
@@ -254,12 +255,46 @@ int main()
 {
     std::cout << "Hello, World!" << std::endl;
 
-    std::shared_ptr<Player> player1 = std::shared_ptr<Player>(new Player(1, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
-    std::shared_ptr<Player> player2 = std::shared_ptr<Player>(new Player(2, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
-    std::shared_ptr<Player> player12 = std::shared_ptr<Player>(new Player(12, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
-    std::shared_ptr<Player> player5 = std::shared_ptr<Player>(new Player(5, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
-    std::shared_ptr<Player> player10 = std::shared_ptr<Player>(new Player(10, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
-    std::shared_ptr<Player> player3 = std::shared_ptr<Player>(new Player(3, nullptr, nullptr, nullptr, 0, 0, 0, 0, false));
+    world_cup_t worldCup;
+    worldCup.add_team(34, 15);
+    worldCup.add_team(12, 5);
+    worldCup.add_team(58, 24);
+    worldCup.add_team(70, 29);
+
+    worldCup.add_player(3,12,3,4,2, false);
+    worldCup.add_player(6,12,0,0,0, true);
+    worldCup.add_player(1,34,30,5,4, false);
+    worldCup.add_player(7,34,10,6,2, true);
+    worldCup.add_player(2,34,5,6,3, false);
+    worldCup.remove_team(58);
+
+
+    for (int i = 100; i < 115; ++i) {
+        worldCup.add_player(i, 34, 0,0,0, false);
+    }
+
+    worldCup.remove_player(7);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    std::shared_ptr<Player> player1 = std::shared_ptr<Player>(new Player(1, nullptr, 0, 0, 0, 0, false));
+//    std::shared_ptr<Player> player2 = std::shared_ptr<Player>(new Player(2, nullptr, 0, 0, 0, 0, false));
+//    std::shared_ptr<Player> player12 = std::shared_ptr<Player>(new Player(12, nullptr, 0, 0, 0, 0, false));
+//    std::shared_ptr<Player> player5 = std::shared_ptr<Player>(new Player(5, nullptr, 0, 0, 0, 0, false));
+//    std::shared_ptr<Player> player10 = std::shared_ptr<Player>(new Player(10, nullptr, 0, 0, 0, 0, false));
+//    std::shared_ptr<Player> player3 = std::shared_ptr<Player>(new Player(3, nullptr, 0, 0, 0, 0, false));
 
 //    AVLTree<std::shared_ptr<Player>, ComparePlayerById> playersById = AVLTree<std::shared_ptr<Player>, ComparePlayerById>();
 //    playersById.root = playersById.insert(playersById.root, player1);
@@ -284,8 +319,13 @@ int main()
 //    std::shared_ptr<Player> arr[]= {player1, player2, player3, player5, player10, player12};
 //    AVLTree<std::shared_ptr<Player>, ComparePlayerById> almostFullById = AVLTree<std::shared_ptr<Player>, ComparePlayerById>(arr, 6);
 
-    std::shared_ptr<Player> arr[]= {player1, player2, player5, player12};
-    AVLTree<std::shared_ptr<Player>, ComparePlayerById> almostFullById = AVLTree<std::shared_ptr<Player>, ComparePlayerById>(arr, 4);
+//    std::shared_ptr<Player> arr[]= {player1, player2, player3, player5, player12};
+//    AVLTree<std::shared_ptr<Player>, ComparePlayerById> almostFullById = AVLTree<std::shared_ptr<Player>, ComparePlayerById>(arr, 4);
+//    AVLNode<std::shared_ptr<Player>>* playerNode = almostFullById.findNode(almostFullById.root, 3);
+//    if(playerNode != nullptr)
+//        std::cout<<playerNode->data->playerID <<std::endl;
+//    else
+//        std::cout<<"not found" <<std::endl;
 
 
 //    ComparePlayerById comparePlayerById;

@@ -13,6 +13,10 @@ public:
     Player(int playerId, Player *closestLeft, Player *closestRight, Team *team, int gamesPlayedPlayer, int numOfGoals,
            int gamesOnJoin, int numOfCards, bool isGoalKeeper);
 
+    Player(int playerId, Team *team, int gamesPlayedPlayer, int numOfGoals, int gamesOnJoin, int numOfCards,
+           bool isGoalKeeper);
+
+    bool isLowerScorer(Player* currentTopScorer) const;
 
     int playerID;
     Player* closestLeft;

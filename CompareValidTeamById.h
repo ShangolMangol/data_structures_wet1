@@ -1,15 +1,14 @@
 //
-// Created by idota on 28/11/2022.
+// Created by idota on 30/11/2022.
 //
 
-#ifndef WET1_COMPARETEAMBYID_H
-#define WET1_COMPARETEAMBYID_H
-
+#ifndef WET1_COMPAREVALIDTEAMBYID_H
+#define WET1_COMPAREVALIDTEAMBYID_H
 
 #include <memory>
 class Team;
 
-class CompareTeamById
+class CompareValidTeamById
 {
 public:
     bool isLeftSmaller(std::shared_ptr<Team>& team, int currentId);
@@ -24,4 +23,4 @@ public:
 };
 
 
-#endif //WET1_COMPARETEAMBYID_H
+#endif //WET1_COMPAREVALIDTEAMBYID_H

@@ -24,6 +24,7 @@
 #include "CompareTeamById.h"
 #include "ComparePlayerById.h"
 #include "ComparePlayerByScore.h"
+#include "CompareValidTeamById.h"
 
 class world_cup_t {
 private:
@@ -31,7 +32,7 @@ private:
 	// Here you may add anything you want
 	//
     AVLTree<std::shared_ptr<Team>, CompareTeamById> teamsById;
-    AVLTree<std::shared_ptr<Team>, CompareTeamById> validTeams;
+    AVLTree<std::shared_ptr<Team>, CompareValidTeamById> validTeams;
     AVLTree<std::shared_ptr<Player>, ComparePlayerById> playersById;
     AVLTree<std::shared_ptr<Player>, ComparePlayerByScore> playersByScore;
     int playersNum;

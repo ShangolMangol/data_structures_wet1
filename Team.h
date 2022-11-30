@@ -6,13 +6,17 @@
 #define WET1_TEAM_H
 #include "AVLTree.h"
 #include <memory>
-#include "CompareTeamById.h"
+#include "ComparePlayerById.h"
+#include "CompareTeamPlayerByScore.h"
 
 class Player;
 
 class Team
 {
 public:
+
+
+    Team(int teamId, int totalPoints);
 
     bool isTeamValid() const;
 
@@ -23,8 +27,8 @@ public:
     int teamPlayersNum;
     int gamesPlayedTeam;
     int goalKeepersNum;
-    AVLTree<std::shared_ptr<Player>,CompareTeamById> playersByID;
-    //AVLTree<std::shared_ptr<Player>,CompareTeamByScore> playerByScore;
+    AVLTree<std::shared_ptr<Player>, ComparePlayerById> playersByID;
+    AVLTree<std::shared_ptr<Player>, CompareTeamPlayerByScore> playerByScore;
     Player *teamTopScorer;
     Team *previousValidTeam;
     Team *nextValidTeam;

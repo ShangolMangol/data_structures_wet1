@@ -1,18 +1,17 @@
+//
+// Created by idota on 30/11/2022.
+//
 
-
-#ifndef WET1_COMPAREPLAYERBYID_H
-#define WET1_COMPAREPLAYERBYID_H
+#ifndef WET1_COMPARETEAMPLAYERBYSCORE_H
+#define WET1_COMPARETEAMPLAYERBYSCORE_H
 
 #include <memory>
-
 class Player;
 
-class ComparePlayerById
+class CompareTeamPlayerByScore
 {
 public:
-    bool isLeftSmaller(std::shared_ptr<Player>& player, int currentId);
     bool isLeftSmaller(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
-    bool isEqual(std::shared_ptr<Player>& player, int currentId);
     bool isEqual(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
 
     void insertToLeft(std::shared_ptr<Player>& player, std::shared_ptr<Player>& currentPlayer);
@@ -22,4 +21,4 @@ public:
 };
 
 
-#endif //WET1_COMPAREPLAYERBYID_H
+#endif //WET1_COMPARETEAMPLAYERBYSCORE_H
