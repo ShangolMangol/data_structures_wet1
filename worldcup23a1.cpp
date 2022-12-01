@@ -2,6 +2,12 @@
 
 using std::shared_ptr;
 
+int absoluteValue(int value)
+{
+    if(value >= 0)
+        return value;
+    return -1 * value;
+}
 
 world_cup_t::world_cup_t() : teamsById(), validTeams(), playersById(),
                         playersByScore(), playersNum(0), topScorer(nullptr)
@@ -301,7 +307,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 
         //merging the arrays
         int index1 = 0, index2 = 0, newIndex = 0;
-        while (index1 < team1Size || index2 < team2Size) {
+        while (index1 < team1Size && index2 < team2Size) {
             if (team1PlayersById[index1]->playerID < team2PlayersById[index2]->playerID) {
                 newTeamPlayersById[newIndex] = team1PlayersById[index1];
                 index1++;
@@ -311,11 +317,21 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             }
             newIndex++;
         }
+        while (index1 < team1Size)
+        {
+            newTeamPlayersById[newIndex] = team1PlayersById[index1];
+            index1++;newIndex++;
+        }
+        while (index2 < team2Size)
+        {
+            newTeamPlayersById[newIndex] = team2PlayersById[index2];
+            index2++;newIndex++;
+        }
 
         index1 = 0;
         index2 = 0;
         newIndex = 0;
-        while (index1 < team1Size || index2 < team2Size) {
+        while (index1 < team1Size && index2 < team2Size) {
             if (team1PlayersByScore[index1]->isLowerScorer(team2PlayersByScore[index2].get())) {
                 newTeamPlayersByScore[newIndex] = team1PlayersByScore[index1];
                 index1++;
@@ -324,6 +340,16 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 index2++;
             }
             newIndex++;
+        }
+        while (index1 < team1Size)
+        {
+            newTeamPlayersByScore[newIndex] = team1PlayersByScore[index1];
+            index1++;newIndex++;
+        }
+        while (index2 < team2Size)
+        {
+            newTeamPlayersByScore[newIndex] = team2PlayersByScore[index2];
+            index2++;newIndex++;
         }
 
         //creating new team
@@ -357,13 +383,14 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         }
 
 
-        teamsById.root = teamsById.deleteNode(teamsById.root, teamId1);
         if (teamTemp1->data->isTeamValid())
             validTeams.root = validTeams.deleteNode(validTeams.root, teamId1);
+        teamsById.root = teamsById.deleteNode(teamsById.root, teamId1);
 
-        teamsById.root = teamsById.deleteNode(teamsById.root, teamId2);
         if (teamTemp2->data->isTeamValid())
             validTeams.root = validTeams.deleteNode(validTeams.root, teamId2);
+        teamsById.root = teamsById.deleteNode(teamsById.root, teamId2);
+
 
         teamsById.root = teamsById.insert(teamsById.root, newTeam);
         if(newTeam->isTeamValid())
@@ -386,8 +413,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             delete[] newTeamPlayersById;
         if(newTeamPlayersByScore != nullptr)
             delete[] newTeamPlayersByScore;
-        return StatusTy
-        pe::ALLOCATION_ERROR;
+        return StatusType::ALLOCATION_ERROR;
     }
     delete[] team1PlayersById;
     delete[] team1PlayersByScore;
@@ -438,20 +464,93 @@ output_t<int> world_cup_t::get_all_players_count(int teamId)
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
 {
-	// TODO: Your code goes here
-    output[0] = 4001;
-    output[1] = 4002;
-	return StatusType::SUCCESS;
+	if(teamId == 0 || output == nullptr || output == NULL)
+        return StatusType::INVALID_INPUT;
+
+    shared_ptr<Player>* playersByScoreArray = nullptr;
+    int length = 0;
+    try
+    {
+        int index = 0;
+        if(teamId < 0)
+        {
+            //playersByScoreArray = playersByScore.getInOrder(playersNum);
+            //length = playersNum;
+
+            Player* player = playersByScore.findLeftestSon(playersByScore.root)->data.get();
+            while (player != nullptr)
+            {
+                output[index] = player->playerID;
+                player = player->closestRight;
+            }
+            return StatusType::SUCCESS;
+        }
+        else
+        {
+            AVLNode<shared_ptr<Team>> *teamTemp = teamsById.findNode(teamsById.root, teamId);
+            if (teamTemp == nullptr)
+                return StatusType::FAILURE;
+
+            playersByScoreArray = teamTemp->data->playerByScore.getInOrder(teamTemp->data->teamPlayersNum);
+            length = teamTemp->data->teamPlayersNum;
+
+            for (int i = 0; i < length; ++i)
+            {
+                output[i] = playersByScoreArray[i]->playerID;
+            }
+        }
+
+
+    }
+    catch(std::bad_alloc & e)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+
+
+    delete playersByScoreArray;
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
-    // TODO: Your code goes here
-    if()
-    AVLNode<shared_ptr<Player>>* playerTemp = playersById.findNode(playersById.root,playerId);
-    if(playerTemp == nullptr)
-        return  StatusType::FAILURE;
-	return 1006;
+    if(playerId <= 0 || teamId <= 0)
+    {
+        return output_t<int>(StatusType::INVALID_INPUT);
+    }
+
+    AVLNode<shared_ptr<Team>>* teamNode = teamsById.findNode(teamsById.root, teamId);
+    if(teamNode == nullptr)
+        return StatusType::FAILURE;
+
+    AVLNode<shared_ptr<Player>>* playerTemp = teamNode->data->playersByID.findNode(
+                            teamNode->data->playersByID.root,playerId);
+
+    if(playerTemp == nullptr || (playerTemp->data->closestLeft == nullptr && playerTemp->data->closestRight == nullptr))
+        return  output_t<int>(StatusType::FAILURE);
+
+    Player* player = playerTemp->data.get();
+    Player* closestLeft = player->closestLeft;
+    Player* closestRight = player->closestRight;
+    if(closestLeft == nullptr)
+        return output_t<int>(closestRight->playerID);
+    if(closestRight == nullptr)
+        return output_t<int>(closestLeft->playerID);
+    if(player->numOfGoals - closestLeft->numOfGoals < closestRight->numOfGoals - player->numOfGoals)
+        return output_t<int>(closestLeft->playerID);
+    if(player->numOfGoals - closestLeft->numOfGoals > closestRight->numOfGoals - player->numOfGoals)
+        return output_t<int>(closestRight->playerID);
+    if(absoluteValue(player->numOfCards - closestLeft->numOfCards) < absoluteValue(closestRight->numOfCards - player->numOfCards))
+        return output_t<int>(closestLeft->playerID);
+    if(absoluteValue(player->numOfCards - closestLeft->numOfCards) > absoluteValue(closestRight->numOfCards - player->numOfCards))
+        return output_t<int>(closestRight->playerID);
+    if(absoluteValue(player->playerID - closestLeft->playerID) < absoluteValue(closestRight->playerID - player->playerID))
+        return output_t<int>(closestLeft->playerID);
+    if(absoluteValue(player->playerID - closestLeft->playerID) > absoluteValue(closestRight->playerID - player->playerID))
+        return output_t<int>(closestRight->playerID);
+    if(closestLeft->playerID > closestRight->playerID)
+        return output_t<int>(closestLeft->playerID);
+    return output_t<int>(closestRight->playerID);
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
