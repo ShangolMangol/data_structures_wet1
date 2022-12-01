@@ -482,6 +482,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             {
                 output[index] = player->playerID;
                 player = player->closestRight;
+                index++;
             }
             return StatusType::SUCCESS;
         }
@@ -508,7 +509,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
     }
 
 
-    delete playersByScoreArray;
+    delete[] playersByScoreArray;
     return StatusType::SUCCESS;
 }
 
