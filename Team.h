@@ -18,7 +18,11 @@ public:
 
     Team(int teamId, int totalPoints);
 
+    Team(int teamId, int totalPoints, int totalCards, int totalGoals, int teamPlayersNum, int goalKeepersNum);
+
     bool isTeamValid() const;
+
+    void updateTrees(std::shared_ptr<Player>* newPlayersById, std::shared_ptr<Player>* newPlayersByScore, int length);
 
     int teamID;
     int totalPoints;

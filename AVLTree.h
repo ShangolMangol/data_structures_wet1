@@ -398,10 +398,35 @@ public:
         return p;
     }
 
+    T* getInOrder(int length)
+    {
+        T* arr = new T[length];
+        int index = 0;
+        inOrderAux(this->root, arr, length, &index);
+        return arr;
+    }
+
+    void inOrderAux(AVLNode<T>* current, T* arr, int length, int* index)
+    {
+        if(current == nullptr)
+            return;
+        if(*index >= length)
+            return;
+
+        inOrderAux(current->left, arr, length, index);
+
+        arr[*index] = current->data;
+        (*index)++;
+
+        inOrderAux(current->right, arr, length, index);
+
+    }
+
 
     void deletePostorder(AVLNode<T>* node)
     {
-        if (node == nullptr) return;
+        if (node == nullptr)
+            return;
 
         //delete both subtrees
         deletePostorder(node->left);

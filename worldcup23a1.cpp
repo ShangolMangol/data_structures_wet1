@@ -263,8 +263,140 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+
+    if (teamId1 <= 0 || teamId2 <= 0 || newTeamId <= 0 || teamId1 == teamId2)
+        return StatusType::INVALID_INPUT;
+
+    AVLNode<shared_ptr<Team>> *teamTemp1 = teamsById.findNode(teamsById.root, teamId1);
+    if (teamTemp1 == nullptr)
+        return StatusType::FAILURE;
+
+    AVLNode<shared_ptr<Team>> *teamTemp2 = teamsById.findNode(teamsById.root, teamId2);
+    if (teamTemp2 == nullptr)
+        return StatusType::FAILURE;
+
+
+    AVLNode<shared_ptr<Team>> *newTeamTemp = teamsById.findNode(teamsById.root, newTeamId);
+    if (newTeamTemp != nullptr && teamId1 != newTeamId && teamId2 != newTeamId)
+        return StatusType::FAILURE;
+
+
+    shared_ptr<Player> *team1PlayersById = nullptr;
+    shared_ptr<Player> *team1PlayersByScore = nullptr;
+    shared_ptr<Player> *team2PlayersById = nullptr;
+    shared_ptr<Player> *team2PlayersByScore = nullptr;
+    shared_ptr<Player> *newTeamPlayersById = nullptr;
+    shared_ptr<Player> *newTeamPlayersByScore = nullptr;
+    try {
+        int team1Size = teamTemp1->data->teamPlayersNum;
+        int team2Size = teamTemp2->data->teamPlayersNum;
+
+        team1PlayersById = teamTemp1->data->playersByID.getInOrder(team1Size);
+        team1PlayersByScore = teamTemp1->data->playerByScore.getInOrder(team1Size);
+        team2PlayersById = teamTemp2->data->playersByID.getInOrder(team2Size);
+        team2PlayersByScore = teamTemp2->data->playerByScore.getInOrder(team2Size);
+
+        newTeamPlayersById = new shared_ptr<Player>[team1Size + team2Size];
+        newTeamPlayersByScore = new shared_ptr<Player>[team1Size + team2Size];
+
+        //merging the arrays
+        int index1 = 0, index2 = 0, newIndex = 0;
+        while (index1 < team1Size || index2 < team2Size) {
+            if (team1PlayersById[index1]->playerID < team2PlayersById[index2]->playerID) {
+                newTeamPlayersById[newIndex] = team1PlayersById[index1];
+                index1++;
+            } else {
+                newTeamPlayersById[newIndex] = team2PlayersById[index2];
+                index2++;
+            }
+            newIndex++;
+        }
+
+        index1 = 0;
+        index2 = 0;
+        newIndex = 0;
+        while (index1 < team1Size || index2 < team2Size) {
+            if (team1PlayersByScore[index1]->isLowerScorer(team2PlayersByScore[index2].get())) {
+                newTeamPlayersByScore[newIndex] = team1PlayersByScore[index1];
+                index1++;
+            } else {
+                newTeamPlayersByScore[newIndex] = team2PlayersByScore[index2];
+                index2++;
+            }
+            newIndex++;
+        }
+
+        //creating new team
+        shared_ptr<Team> newTeam = shared_ptr<Team>(new Team(newTeamId,
+                                                             teamTemp1->data->totalPoints +
+                                                             teamTemp2->data->totalPoints,
+                                                             teamTemp1->data->totalCards + teamTemp2->data->totalCards,
+                                                             teamTemp1->data->totalGoals + teamTemp2->data->totalGoals,
+                                                             teamTemp1->data->teamPlayersNum +
+                                                             teamTemp2->data->teamPlayersNum,
+                                                             teamTemp1->data->goalKeepersNum +
+                                                             teamTemp2->data->goalKeepersNum));
+
+        if (newTeamId == teamId1)
+            newTeam->gamesPlayedTeam = teamTemp1->data->gamesPlayedTeam;
+        if (newTeamId == teamId2)
+            newTeam->gamesPlayedTeam = teamTemp2->data->gamesPlayedTeam;
+
+        //updating trees
+        newTeam->updateTrees(newTeamPlayersById, newTeamPlayersByScore, team1Size + team2Size);
+
+        //updating players
+        for (int i = 0; i < team1Size + team2Size; ++i) {
+            Player *player = newTeamPlayersById[i].get();
+            if (player->team->teamID != newTeamId) {
+                player->gamesPlayedPlayer =
+                        player->gamesPlayedPlayer + player->team->gamesPlayedTeam - player->gamesOnJoin;
+                player->gamesOnJoin = 0;
+            }
+            player->team = newTeam.get();
+        }
+
+
+        teamsById.root = teamsById.deleteNode(teamsById.root, teamId1);
+        if (teamTemp1->data->isTeamValid())
+            validTeams.root = validTeams.deleteNode(validTeams.root, teamId1);
+
+        teamsById.root = teamsById.deleteNode(teamsById.root, teamId2);
+        if (teamTemp2->data->isTeamValid())
+            validTeams.root = validTeams.deleteNode(validTeams.root, teamId2);
+
+        teamsById.root = teamsById.insert(teamsById.root, newTeam);
+        if(newTeam->isTeamValid())
+            validTeams.root = validTeams.insert(validTeams.root, newTeam);
+
+
+    }
+
+    catch (std::bad_alloc& e)
+    {
+        if(team1PlayersById != nullptr)
+            delete[] team1PlayersById;
+        if(team1PlayersByScore != nullptr)
+            delete[] team1PlayersByScore;
+        if(team2PlayersById != nullptr)
+            delete[] team2PlayersById;
+        if(team2PlayersByScore != nullptr)
+            delete[] team2PlayersByScore;
+        if(newTeamPlayersById != nullptr)
+            delete[] newTeamPlayersById;
+        if(newTeamPlayersByScore != nullptr)
+            delete[] newTeamPlayersByScore;
+        return StatusTy
+        pe::ALLOCATION_ERROR;
+    }
+    delete[] team1PlayersById;
+    delete[] team1PlayersByScore;
+    delete[] team2PlayersById;
+    delete[] team2PlayersByScore;
+    delete[] newTeamPlayersById;
+    delete[] newTeamPlayersByScore;
+
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_top_scorer(int teamId)
@@ -289,9 +421,19 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
 
 output_t<int> world_cup_t::get_all_players_count(int teamId)
 {
-	// TODO: Your code goes here
-    static int i = 0;
-    return (i++==0) ? 11 : 2;
+    if(teamId == 0)
+        return output_t<int>(StatusType::INVALID_INPUT);
+
+
+    if(teamId < 0)
+        return output_t<int>(playersNum);
+
+
+    AVLNode<shared_ptr<Team>> *teamTemp = teamsById.findNode(teamsById.root, teamId);
+    if (teamTemp == nullptr)
+        return output_t<int>(StatusType::FAILURE);
+
+    return output_t<int>(teamTemp->data->teamPlayersNum);
 }
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
@@ -304,7 +446,11 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
-	// TODO: Your code goes here
+    // TODO: Your code goes here
+    if()
+    AVLNode<shared_ptr<Player>>* playerTemp = playersById.findNode(playersById.root,playerId);
+    if(playerTemp == nullptr)
+        return  StatusType::FAILURE;
 	return 1006;
 }
 
