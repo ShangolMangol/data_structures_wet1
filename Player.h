@@ -4,7 +4,11 @@
 
 #ifndef WET1_PLAYER_H
 #define WET1_PLAYER_H
-#include "Team.h"
+
+
+
+//#include "Team.h"
+class Team;
 
 class Player
 {

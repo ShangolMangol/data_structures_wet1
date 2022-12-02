@@ -5,11 +5,14 @@
 #ifndef WET1_TEAM_H
 #define WET1_TEAM_H
 #include "AVLTree.h"
-#include <memory>
 #include "ComparePlayerById.h"
 #include "CompareTeamPlayerByScore.h"
+#include <memory>
+#include "Player.h"
 
-class Player;
+//class Player;
+//class ComparePlayerById;
+//class CompareTeamPlayerByScore;
 
 class Team
 {

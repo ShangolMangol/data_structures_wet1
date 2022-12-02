@@ -2,6 +2,7 @@
 // Created by idota on 28/11/2022.
 //
 
+#include "Team.h"
 #include "Player.h"
 
 Player::Player(int playerId, Player *closestLeft, Player *closestRight,

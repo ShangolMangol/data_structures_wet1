@@ -6,7 +6,8 @@
 #define WET1_COMPARETEAMPLAYERBYSCORE_H
 
 #include <memory>
-class Player;
+#include "Player.h"
+//class Player;
 
 class CompareTeamPlayerByScore
 {

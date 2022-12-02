@@ -25,6 +25,8 @@
 #include "ComparePlayerById.h"
 #include "ComparePlayerByScore.h"
 #include "CompareValidTeamById.h"
+#include "SimulationTeam.h"
+//#pragma once
 
 class world_cup_t {
 private:

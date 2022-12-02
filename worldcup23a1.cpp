@@ -48,9 +48,10 @@ StatusType world_cup_t::remove_team(int teamId)
     if(teamNode->data->teamPlayersNum != 0)
         return StatusType::FAILURE;
 
-    teamsById.root = teamsById.deleteNode(teamsById.root, teamId);
     if(teamNode->data->isTeamValid())
        validTeams.root = validTeams.deleteNode(validTeams.root, teamId);
+    teamsById.root = teamsById.deleteNode(teamsById.root, teamId);
+
 
     return StatusType::SUCCESS;
 }
@@ -387,6 +388,11 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             validTeams.root = validTeams.deleteNode(validTeams.root, teamId1);
         teamsById.root = teamsById.deleteNode(teamsById.root, teamId1);
 
+
+        AVLNode<shared_ptr<Team>> *teamTemp2 = teamsById.findNode(teamsById.root, teamId2);
+        if (teamTemp2 == nullptr)
+            return StatusType::FAILURE;
+
         if (teamTemp2->data->isTeamValid())
             validTeams.root = validTeams.deleteNode(validTeams.root, teamId2);
         teamsById.root = teamsById.deleteNode(teamsById.root, teamId2);
@@ -556,7 +562,86 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
-	// TODO: Your code goes here
-	return 2;
+    if(minTeamId < 0 || maxTeamId < 0 || minTeamId > maxTeamId)
+        return output_t<int>(StatusType::INVALID_INPUT);
+    try
+    {
+        AVLNode<shared_ptr<Team>>* teamInRange = validTeams.findNodeInRange(validTeams.root,
+                                                                            minTeamId, maxTeamId);
+        if(teamInRange == nullptr)
+            return output_t<int>(StatusType::FAILURE);
+        Team* currentTeam = teamInRange->data.get();
+        while (currentTeam->nextValidTeam != nullptr && currentTeam->nextValidTeam->teamID <= maxTeamId)
+        {
+            currentTeam = currentTeam->nextValidTeam;
+        }
+        int length = 1;
+        while (currentTeam->previousValidTeam != nullptr && currentTeam->previousValidTeam->teamID >= minTeamId)
+        {
+            currentTeam = currentTeam->previousValidTeam;
+            length++;
+        }
+        if(length == 1)
+            return output_t<int>(currentTeam->teamID);
+        SimulationTeam* teamsForKnockout = new SimulationTeam[length];
+        for (int i = 0; i < length; ++i)
+        {
+            teamsForKnockout[i] = SimulationTeam(currentTeam->teamID,
+                                                 currentTeam->totalPoints + currentTeam->totalGoals - currentTeam->totalCards);
+            currentTeam = currentTeam->nextValidTeam;
+        }
+        SimulationTeam* newTeamsForKnockout;
+        int newLength = 0;
+        while(length > 1)
+        {
+            if(length % 2 == 1)
+                newLength = length/2 + 1;
+            else
+                newLength = length/2;
+
+            newTeamsForKnockout = new SimulationTeam[newLength];
+
+            for (int i = 0; i < newLength; ++i)
+            {
+                if(2*i + 1 >= length)
+                {
+                    newTeamsForKnockout[i] = teamsForKnockout[2 * i];
+                }
+                else {
+                    if (teamsForKnockout[2 * i].score > teamsForKnockout[2 * i + 1].score)
+                    {
+                        newTeamsForKnockout[i] = teamsForKnockout[2 * i];
+
+                    }
+                    else if(teamsForKnockout[2 * i].score < teamsForKnockout[2 * i + 1].score)
+                    {
+                        newTeamsForKnockout[i] = teamsForKnockout[2 * i +1];
+                    }
+                    else
+                    {
+                        if(teamsForKnockout[2*i].teamId > teamsForKnockout[2*i +1].teamId)
+                            newTeamsForKnockout[i] = teamsForKnockout[2 * i];
+                        else
+                            newTeamsForKnockout[i] = teamsForKnockout[2 * i +1];
+
+                    }
+                    newTeamsForKnockout[i].score = teamsForKnockout[2*i].score + teamsForKnockout[2*i +1].score + 3;
+
+                }
+
+            }
+            delete[] teamsForKnockout;
+            teamsForKnockout = newTeamsForKnockout;
+            length = newLength;
+        }
+        int winningTeamId = teamsForKnockout[0].teamId;
+        delete[] teamsForKnockout;
+        return output_t<int>(winningTeamId);
+    }
+    catch(std::bad_alloc & e)
+    {
+        return  output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
+
 }
 

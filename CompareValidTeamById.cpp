@@ -58,4 +58,5 @@ void CompareValidTeamById::handleDelete(std::shared_ptr<Team> &teamToDelete)
 
     teamToDelete->nextValidTeam = nullptr;
     teamToDelete->previousValidTeam = nullptr;
+
 }
