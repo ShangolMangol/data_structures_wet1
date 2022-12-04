@@ -302,6 +302,14 @@ public:
     template<class S>
     AVLNode<T> * deleteNode(AVLNode<T> *current, S data)
     {
+        bool deleteFlag = false;
+        return deleteNodeAux(current,data,&deleteFlag);
+    }
+
+    template<class S>
+    AVLNode<T> * deleteNodeAux(AVLNode<T> *current, S data, bool *deleteFlag)
+    {
+
         if(current == nullptr)
             return nullptr;
         if(current->left == nullptr && current->right == nullptr){
@@ -312,8 +320,10 @@ public:
                 current->left= nullptr;
                 current->right= nullptr;
 
-                compare.handleDelete(current->data);
-
+                if(*deleteFlag == false) {
+                    compare.handleDelete(current->data);
+                    *deleteFlag = true;
+                }
                 delete current;
                 return nullptr;
             }
@@ -324,77 +334,33 @@ public:
 
         if(compare.isLeftSmaller(current->data, data)) //current->data < data
         {
-            current->right = deleteNode(current->right, data);
+            current->right = deleteNodeAux(current->right, data, deleteFlag);
         }
         else if(!compare.isEqual(current->data, data)) // checking current->data > data
         {
-            current->left = deleteNode(current->left, data);
+            current->left = deleteNodeAux(current->left, data, deleteFlag);
         }
         else //they are equal
         {
-            compare.handleDelete(current->data);
+            if(*deleteFlag == false)
+            {
+                compare.handleDelete(current->data);
+                *deleteFlag = true;
+            }
             if(current->left != nullptr)
             {
                 temp = findRightestSon(current->left);
                 current->data = temp->data;
-                current->left=deleteNodeAux(current->left, temp->data);
+//                current->data = current->left->data;
+                current->left=deleteNodeAux(current->left, temp->data, deleteFlag);
             }
             else
             {
-//                temp = findLeftestSon(p->right);
-//                p->data = temp->data;
-                current->data = current->right->data;
-                current->right = deleteNodeAux(current->right,current->right->data);
+                temp = findLeftestSon(current->right);
+                current->data = temp->data;
+//                current->data = current->right->data;
+                current->right = deleteNodeAux(current->right,temp->data, deleteFlag);
             }
-        }
-
-        current->height= calculateHeight(current);
-
-        //checking for rotations
-        if(getBalanceFactor(current) == 2 &&
-                (getBalanceFactor(current->left) == 0 || getBalanceFactor(current->left) == 1))
-            current = LLrotation(current);
-        else if(getBalanceFactor(current) == 2 && getBalanceFactor(current->left) == -1)
-            current = LRrotation(current);
-        else if(getBalanceFactor(current) == -2 &&
-            (getBalanceFactor(current->right) == -1 || getBalanceFactor(current->right) == 0))
-            current = RRrotation(current);
-        else if(getBalanceFactor(current) == -2 && getBalanceFactor(current->right) == 1)
-            current = RLrotation(current);
-
-
-        return current;
-    }
-
-    template<class S>
-    AVLNode<T> * deleteNodeAux(AVLNode<T> *current, S data)
-    {
-        if(current == nullptr)
-            return nullptr;
-        if(current->left == nullptr && current->right == nullptr){
-            if(compare.isEqual(current->data, data))
-            {
-                if (current == this->root)
-                    this->root = nullptr;
-                current->left= nullptr;
-                current->right= nullptr;
-
-//                compare.handleDelete(current->data);
-
-                delete current;
-                return nullptr;
-            }
-            return current;
-        }
-
-
-        if(compare.isLeftSmaller(current->data, data)) //current->data < data
-        {
-            current->right = deleteNodeAux(current->right, data);
-        }
-        else if(!compare.isEqual(current->data, data)) // checking current->data > data
-        {
-            current->left = deleteNodeAux(current->left, data);
         }
 
         current->height= calculateHeight(current);
@@ -413,19 +379,69 @@ public:
 
 
         return current;
+
+
+//        if(current == nullptr)
+//            return nullptr;
+//        if(current->left == nullptr && current->right == nullptr){
+//            if(compare.isEqual(current->data, data))
+//            {
+//                if (current == this->root)
+//                    this->root = nullptr;
+//                current->left= nullptr;
+//                current->right= nullptr;
+//
+////                compare.handleDelete(current->data);
+//
+//                delete current;
+//                return nullptr;
+//            }
+//            return current;
+//        }
+//
+//
+//        if(compare.isLeftSmaller(current->data, data)) //current->data < data
+//        {
+//            current->right = deleteNodeAux(current->right, data);
+//        }
+//        else if(!compare.isEqual(current->data, data)) // checking current->data > data
+//        {
+//            current->left = deleteNodeAux(current->left, data);
+//        }
+//
+//        current->height= calculateHeight(current);
+//
+//        //checking for rotations
+//        if(getBalanceFactor(current) == 2 &&
+//           (getBalanceFactor(current->left) == 0 || getBalanceFactor(current->left) == 1))
+//            current = LLrotation(current);
+//        else if(getBalanceFactor(current) == 2 && getBalanceFactor(current->left) == -1)
+//            current = LRrotation(current);
+//        else if(getBalanceFactor(current) == -2 &&
+//                (getBalanceFactor(current->right) == -1 || getBalanceFactor(current->right) == 0))
+//            current = RRrotation(current);
+//        else if(getBalanceFactor(current) == -2 && getBalanceFactor(current->right) == 1)
+//            current = RLrotation(current);
+//
+//
+//        return current;
     }
 
     AVLNode<T>* findRightestSon(AVLNode<T>* node){
+        if(node == nullptr)
+            return nullptr;
         while(node->right != nullptr)
             node = node->right;
         return node;
     }
 
-    AVLNode<T>* findLeftestSon(AVLNode<T>* p){
-        while(p->left != nullptr)
-            p = p->left;
+    AVLNode<T>* findLeftestSon(AVLNode<T>* node){
+        if(node == nullptr)
+            return nullptr;
+        while(node->left != nullptr)
+            node = node->left;
 
-        return p;
+        return node;
     }
 
     T* getInOrder(int length)

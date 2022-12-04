@@ -73,6 +73,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
     if(playerTemp != nullptr)
         return  StatusType::FAILURE;
 
+
+
     try
     {
         shared_ptr<Player> newPlayer =
@@ -102,7 +104,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 
         newPlayer->team->totalGoals += newPlayer->numOfGoals;
         newPlayer->team->totalCards += newPlayer->numOfCards;
-        newPlayer->team->teamPlayersNum += 1;
+        newPlayer->team->teamPlayersNum = newPlayer->team-> teamPlayersNum + 1;
         if(goalKeeper)
             newPlayer->team->goalKeepersNum += 1;
         newPlayer->gamesOnJoin = newPlayer->team->gamesPlayedTeam;
@@ -139,10 +141,16 @@ StatusType world_cup_t::remove_player(int playerId)
         team->totalGoals -= playerToDelete->numOfGoals;
         team->totalCards -= playerToDelete->numOfCards;
         team->teamPlayersNum -= 1;
+        if(team->teamPlayersNum < 0)
+            team->teamPlayersNum = 0;
         if(playerToDelete->isGoalKeeper)
             team->goalKeepersNum -= 1;
         if(team->goalKeepersNum < 0)
             team->goalKeepersNum = 0;
+
+        this->playersNum--;
+        if(this->playersNum < 0)
+            this->playersNum = 0;
 
         playersById.root = playersById.deleteNode(playersById.root, playerToDelete->playerID);
         playersByScore.root = playersByScore.deleteNode(playersByScore.root, playerToDelete);
@@ -151,11 +159,33 @@ StatusType world_cup_t::remove_player(int playerId)
         team->playersByID.root = team->playersByID.deleteNode(team->playersByID.root,
                                                               playerToDelete->playerID);
 
+
+//        int checkIndex = 0;
+//        Player* checkPlayer = playersByScore.findLeftestSon(playersByScore.root)->data.get();
+//        while(checkPlayer->closestRight != nullptr)
+//        {
+//            checkIndex++;
+//            checkPlayer = checkPlayer->closestRight;
+//        }
+//        if(checkIndex != playersNum)
+//            checkIndex=0;
+
+
         if(wasTeamValid && !team->isTeamValid())
             validTeams.root = validTeams.deleteNode(validTeams.root, team->teamID);
 
-        topScorer = playersByScore.findRightestSon(playersByScore.root)->data.get();
-        team->teamTopScorer = team->playerByScore.findRightestSon(team->playerByScore.root)->data.get();
+        AVLNode<shared_ptr<Player>>* playerTempTop = playersByScore.findRightestSon(playersByScore.root);
+        if(playerTempTop != nullptr)
+            topScorer = playerTempTop->data.get();
+        else
+            topScorer = nullptr;
+
+        playerTempTop = team->playerByScore.findRightestSon(team->playerByScore.root);
+        if(playerTempTop != nullptr)
+            team->teamTopScorer = playerTempTop->data.get();
+        else
+            team->teamTopScorer = nullptr;
+
 
     }
     catch (std::bad_alloc& e)
@@ -194,8 +224,18 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         playersByScore.root = playersByScore.insert(playersByScore.root, playerToUpdate);
         team->playerByScore.root = team->playerByScore.insert(team->playerByScore.root, playerToUpdate);
 
-        topScorer = playersByScore.findRightestSon(playersByScore.root)->data.get();
-        team->teamTopScorer = team->playerByScore.findRightestSon(team->playerByScore.root)->data.get();
+        AVLNode<shared_ptr<Player>>* playerTempTop = playersByScore.findRightestSon(playersByScore.root);
+        if(playerTempTop != nullptr)
+            topScorer = playerTempTop->data.get();
+        else
+            topScorer = nullptr;
+
+        playerTempTop = team->playerByScore.findRightestSon(team->playerByScore.root);
+        if(playerTempTop != nullptr)
+            team->teamTopScorer = playerTempTop->data.get();
+        else
+            team->teamTopScorer = nullptr;
+
 
     } catch(std::bad_alloc& e)
     {

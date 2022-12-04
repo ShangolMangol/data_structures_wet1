@@ -62,10 +62,10 @@ void ComparePlayerByScore::insertToRight(std::shared_ptr<Player> &player, std::s
     if(currentPlayer->closestRight == nullptr && currentPlayer->closestLeft == nullptr)
     {
         currentPlayer->closestLeft = player.get();
-            currentPlayer->closestRight = player->closestRight;
-            player->closestRight = currentPlayer.get();
-            if(currentPlayer->closestRight != nullptr)
-                currentPlayer->closestRight->closestLeft = currentPlayer.get();
+        currentPlayer->closestRight = player->closestRight;
+        player->closestRight = currentPlayer.get();
+        if(currentPlayer->closestRight != nullptr)
+            currentPlayer->closestRight->closestLeft = currentPlayer.get();
     }
 }
 
