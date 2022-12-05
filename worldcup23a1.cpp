@@ -513,6 +513,9 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
 	if(teamId == 0 || output == nullptr || output == NULL)
         return StatusType::INVALID_INPUT;
 
+    if(playersNum == 0)
+        return StatusType::FAILURE;
+
     shared_ptr<Player>* playersByScoreArray = nullptr;
     int length = 0;
     try
@@ -522,8 +525,13 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
         {
             //playersByScoreArray = playersByScore.getInOrder(playersNum);
             //length = playersNum;
+            Player* player = nullptr;
+            AVLNode<shared_ptr<Player>>* startPlayerTemp = playersByScore.findLeftestSon(playersByScore.root);
+            if(startPlayerTemp != nullptr)
+                player = startPlayerTemp->data.get();
+            else
+                player = nullptr;
 
-            Player* player = playersByScore.findLeftestSon(playersByScore.root)->data.get();
             while (player != nullptr)
             {
                 output[index] = player->playerID;
