@@ -10,9 +10,6 @@
 #include <memory>
 #include "Player.h"
 
-//class Player;
-//class ComparePlayerById;
-//class CompareTeamPlayerByScore;
 
 class Team
 {

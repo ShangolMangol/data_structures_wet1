@@ -207,14 +207,9 @@ public:
     AVLNode<T>* insert(AVLNode<T> *current, T data){
 
         if(current == nullptr){
-//            AVLNode<T> *n;
-//            n = new AVLNode<T>;
-//            n->data = data;
-//            current = n;
+
             current = new AVLNode<T>(data);
-//            current->left = nullptr;
-//            current->right = nullptr;
-//            current->height = 0;
+
             return current;
         }
         else
@@ -381,50 +376,6 @@ public:
         return current;
 
 
-//        if(current == nullptr)
-//            return nullptr;
-//        if(current->left == nullptr && current->right == nullptr){
-//            if(compare.isEqual(current->data, data))
-//            {
-//                if (current == this->root)
-//                    this->root = nullptr;
-//                current->left= nullptr;
-//                current->right= nullptr;
-//
-////                compare.handleDelete(current->data);
-//
-//                delete current;
-//                return nullptr;
-//            }
-//            return current;
-//        }
-//
-//
-//        if(compare.isLeftSmaller(current->data, data)) //current->data < data
-//        {
-//            current->right = deleteNodeAux(current->right, data);
-//        }
-//        else if(!compare.isEqual(current->data, data)) // checking current->data > data
-//        {
-//            current->left = deleteNodeAux(current->left, data);
-//        }
-//
-//        current->height= calculateHeight(current);
-//
-//        //checking for rotations
-//        if(getBalanceFactor(current) == 2 &&
-//           (getBalanceFactor(current->left) == 0 || getBalanceFactor(current->left) == 1))
-//            current = LLrotation(current);
-//        else if(getBalanceFactor(current) == 2 && getBalanceFactor(current->left) == -1)
-//            current = LRrotation(current);
-//        else if(getBalanceFactor(current) == -2 &&
-//                (getBalanceFactor(current->right) == -1 || getBalanceFactor(current->right) == 0))
-//            current = RRrotation(current);
-//        else if(getBalanceFactor(current) == -2 && getBalanceFactor(current->right) == 1)
-//            current = RLrotation(current);
-//
-//
-//        return current;
     }
 
     AVLNode<T>* findRightestSon(AVLNode<T>* node){

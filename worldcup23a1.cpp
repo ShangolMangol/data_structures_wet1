@@ -15,7 +15,7 @@ world_cup_t::world_cup_t() : teamsById(), validTeams(), playersById(),
 
 world_cup_t::~world_cup_t()
 {
-	// NOTHING TO DO HERE PROBABLY
+	// NOTHING TO DO HERE
 }
 
 
@@ -159,16 +159,6 @@ StatusType world_cup_t::remove_player(int playerId)
         team->playersByID.root = team->playersByID.deleteNode(team->playersByID.root,
                                                               playerToDelete->playerID);
 
-
-//        int checkIndex = 0;
-//        Player* checkPlayer = playersByScore.findLeftestSon(playersByScore.root)->data.get();
-//        while(checkPlayer->closestRight != nullptr)
-//        {
-//            checkIndex++;
-//            checkPlayer = checkPlayer->closestRight;
-//        }
-//        if(checkIndex != playersNum)
-//            checkIndex=0;
 
 
         if(wasTeamValid && !team->isTeamValid())
